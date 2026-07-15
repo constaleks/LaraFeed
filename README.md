@@ -103,6 +103,6 @@ The app runs across four containers plus a host-based frontend toolchain:
 - [ ] Real-time polling for new content updates
 - [ ] Search functionality
 
-## License
+## Contributing
 
-This project is for educational and personal portfolio purposes.
+This is a study project. Feel free to fork and experiment with the codebase.
