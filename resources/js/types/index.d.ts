@@ -4,6 +4,8 @@ export interface Post {
     body: string;
     created_at: string;
     updated_at: string;
+    user_id: number;
+    user: User;
 }
 
 export interface navItem {
@@ -12,3 +14,11 @@ export interface navItem {
 }
 
 export type IsActiveFn = (href: string) => boolean;
+
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    created_at: string;
+    updated_at: string;
+}

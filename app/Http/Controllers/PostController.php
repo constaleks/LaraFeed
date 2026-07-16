@@ -7,20 +7,21 @@ use Inertia\Response;
 use Inertia\Inertia;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse; 
+use App\Models\User;
 
 class PostController extends Controller
 {
     public function index(): Response 
     {
         return Inertia::render('posts/index', [
-            'posts' => Post::latest()->get(),
+            'posts' => Post::with('user')->latest()->get(),
         ]);
     }
 
     public function show(string $id): Response
     {
         return Inertia::render('posts/show', [
-            'post' => Post::findOrFail($id),
+            'post' => Post::with('user')->findOrFail($id),
         ]);
     }
 
@@ -36,7 +37,10 @@ class PostController extends Controller
             'body' => 'required|string|min:10|max:255'
         ]);
 
-        Post::create($validated);
+        Post::create([
+            ...$validated,
+            'user_id' => User::inRandomOrder()->first()->id
+        ]);
 
         return redirect('/posts');
     }
