@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse; 
 use App\Models\User;
+use App\Http\Requests\Post\StoreRequest;
 
 class PostController extends Controller
 {
@@ -21,7 +22,10 @@ class PostController extends Controller
     public function show(string $id): Response
     {
         return Inertia::render('posts/show', [
-            'post' => Post::with('user')->findOrFail($id),
+            'post' => Post::with([
+                'user',
+                'comments' => fn($query) => $query->with('user')->latest()
+            ])->findOrFail($id),
         ]);
     }
 
@@ -30,12 +34,9 @@ class PostController extends Controller
         return Inertia::render('posts/create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|min:5|max:120',
-            'body' => 'required|string|min:10|max:255'
-        ]);
+        $validated = $request->validated();
 
         Post::create([
             ...$validated,

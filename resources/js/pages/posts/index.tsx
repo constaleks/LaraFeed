@@ -22,7 +22,7 @@ export default function PostsIndex({posts}: PostsIndexProps) {
                                 <CardHeader>
                                     <div className="flex items-center gap-2 text-sm">
                                         <div className="h-11 w-11 shrink-0 rounded-full bg-muted" />
-                                        <span className="font-bold">{post.user.name}</span>
+                                        <span className="font-bold">{post.user?.name}</span>
                                         <span className="text-muted-foreground">·</span>
                                         <span className="text-muted-foreground">
                                             {new Date(post.created_at).toLocaleDateString("en-US", {
