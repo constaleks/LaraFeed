@@ -1,4 +1,5 @@
 import { createInertiaApp } from '@inertiajs/react';
+import { ThemeProvider } from '@/hooks/use-theme';
 
 createInertiaApp({
     strictMode: true,
@@ -7,4 +8,5 @@ createInertiaApp({
         extension: '.tsx',
         lazy: true,
     },
+    withApp: (app) => <ThemeProvider>{app}</ThemeProvider>,
 });

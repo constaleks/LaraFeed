@@ -24,7 +24,7 @@ services:
     image: mysql:latest
     restart: always
     volumes:
-      - ./tmp/db:/var/lib/mysql
+      - larafeed_db_data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: larafeed
       MYSQL_ROOT_PASSWORD: root
@@ -49,3 +49,5 @@ services:
     depends_on:
       - db
     container_name: larafeed_phpmyadmin
+volumes:
+  larafeed_db_data:
