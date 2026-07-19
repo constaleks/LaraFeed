@@ -25,7 +25,4 @@ export default defineConfig({
             ignored: ['**/storage/framework/views/**'],
         },
     },
-    esbuild: {
-        jsx: 'automatic'
-    }
 });

@@ -1,7 +1,9 @@
 import { usePage } from "@inertiajs/react";
 import type { ReactNode } from "react";
+
 import AppNavigation from "@/components/app-navigation";
 import AppMobileNavigation from "@/components/app-mobile-navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 interface AppLayoutProps {
     title: string;
@@ -24,7 +26,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
             <div className="flex w-full max-w-7xl">
                 <AppNavigation navItems={navItems} isActive={isActive} />
 
-                <main className="w-full max-w-3xl border-x border-border min-h-screen max-h-screen overflow-y-scroll pb-16 lg:pb-0 no-scrollbar">
+                <main className="w-full max-w-3xl border-x border-border min-h-screen max-h-screen overflow-y-scroll scroll-pt-16 pb-16 lg:pb-0 no-scrollbar">
                     <div className="sticky top-0 z-10 border-b border-border px-4 py-3 backdrop-blur-md">
                         <h1 className="text-xl font-bold">{title}</h1>
                     </div>
@@ -58,6 +60,8 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                         nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                     </p>
                 </aside>
+
+                <Toaster />
             </div>
 
             <AppMobileNavigation navItems={navItems} isActive={isActive} />

@@ -1,5 +1,3 @@
-import { Post } from '@/types';
-
 import { Form } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import InputError from '@/components/input-error';
 
 interface CommentFormProps {
-    post: Post;
+    postId: number;
+    onCommentAdded?: () => void;
 }
 
-function CommentForm({post}: CommentFormProps) {
+function CommentForm({postId, onCommentAdded}: CommentFormProps) {
     return (
         <Card className="mt-4">
             <CardHeader>
@@ -18,13 +17,17 @@ function CommentForm({post}: CommentFormProps) {
                 <CardDescription>Share your thoughts about this post</CardDescription>
             </CardHeader>
             <CardContent>
-                <Form action="/comments" method="post" resetOnSuccess>
-                    {({ errors }) => (
+                <Form action="/comments" method="post" 
+                    resetOnSuccess 
+                    onSuccess={() => onCommentAdded?.()}
+                    options={{only: ["comments"]}}
+                >
+                    {({ errors, processing }) => (
                         <>
-                            <input type="hidden" name="post_id" value={post.id} />
+                            <input type="hidden" name="post_id" value={postId} />
                             <Textarea name="body" aria-invalid={!!errors.body} />
                             <InputError message={errors.body} />
-                            <Button type="submit" className="mt-2 cursor-pointer">Add Comment</Button>
+                            <Button type="submit" className="mt-2 cursor-pointer" disabled={processing}>Add Comment</Button>
                         </>
                     )}
                     
