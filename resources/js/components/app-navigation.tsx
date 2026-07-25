@@ -1,10 +1,12 @@
-import { navItem, IsActiveFn } from "@/types";
+import { NavItem, IsActiveFn } from "@/types";
 import { Link } from "@inertiajs/react";
 import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "./ui/button";
 
+import { create } from "@/actions/App/Http/Controllers/PostController";
+
 interface AppNavigationProps {
-    navItems: navItem[];
+    navItems: NavItem[];
     isActive: IsActiveFn;
 }
 
@@ -21,17 +23,17 @@ export default function AppNavigation({ navItems, isActive }: AppNavigationProps
             <nav className="mt-2 flex flex-col gap-1">
                 {navItems.map((item) => (
                     <Link
-                        key={item.href}
+                        key={item.label} 
                         href={item.href}
                         className={`w-fit rounded-full px-4 py-3 text-xl transition-colors hover:bg-accent ${
-                            isActive(item.href) ? "font-bold" : "font-normal text-muted-foreground"
+                            isActive(item.href.url) ? "font-bold" : "font-normal text-muted-foreground"
                         }`}
                     >
                         {item.label}
                     </Link>
                 ))}
 
-                <Button render={<Link href="/posts/create" />} nativeButton={false} size="lg" className="mx-2 text-lg">
+                <Button render={<Link href={create()} />} nativeButton={false} size="lg" className="mx-2 text-lg">
                     Write a post
                 </Button>
             </nav>

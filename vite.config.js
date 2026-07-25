@@ -4,6 +4,7 @@ import { bunny } from 'laravel-vite-plugin/fonts';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import inertia from '@inertiajs/vite';
+import { wayfinder } from "@laravel/vite-plugin-wayfinder";
 
 export default defineConfig({
     plugins: [
@@ -15,6 +16,9 @@ export default defineConfig({
                     weights: [400, 500, 600],
                 }),
             ],
+        }),
+        wayfinder({
+            command: "docker exec larafeed_app php artisan wayfinder:generate",
         }),
         react(),
         tailwindcss(),

@@ -4,6 +4,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import InputError from '@/components/input-error';
 
+import { store } from '@/actions/App/Http/Controllers/CommentController';
+
 interface CommentFormProps {
     postId: number;
     onCommentSubmitting?: () => void;
@@ -18,7 +20,7 @@ function CommentForm({postId, onCommentSubmitting, onCommentAdded}: CommentFormP
                 <CardDescription>Share your thoughts about this post</CardDescription>
             </CardHeader>
             <CardContent>
-                <Form action="/comments" method="post"
+                <Form action={store()}
                     resetOnSuccess
                     onStart={() => onCommentSubmitting?.()}
                     onSuccess={() => onCommentAdded?.()}

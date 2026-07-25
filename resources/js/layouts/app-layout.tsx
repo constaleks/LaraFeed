@@ -5,15 +5,19 @@ import AppNavigation from "@/components/app-navigation";
 import AppMobileNavigation from "@/components/app-mobile-navigation";
 import { Toaster } from "@/components/ui/sonner";
 
+import { index as homeIndex } from "@/routes/home";
+import { index as aboutIndex } from "@/routes/about";
+import { index as postIndex } from "@/actions/App/Http/Controllers/PostController";
+
 interface AppLayoutProps {
     title: string;
     children: ReactNode;
 }
 
 const navItems = [
-    { href: "/", label: "Home" },
-    { href: "/posts", label: "Posts" },
-    { href: "/about", label: "About" },
+    { href: homeIndex(), label: "Home" },
+    { href: postIndex(), label: "Posts" },
+    { href: aboutIndex(), label: "About" },
 ];
 
 export default function AppLayout({ title, children }: AppLayoutProps) {

@@ -15,7 +15,7 @@ class PostController extends Controller
     public function index(): Response 
     {
         return Inertia::render('posts/index', [
-            'posts' => Post::with('user')->latest()->get(),
+            'posts' => Post::with('user')->withCount('likes')->latest()->get(),
         ]);
     }
 
@@ -27,6 +27,13 @@ class PostController extends Controller
             'post' => $post,
             'comments' => Inertia::defer(
                 fn() => $post->comments()->with('user')->latest()->get()
+            ),
+            'likes' => Inertia::defer(
+                fn() => [
+                    'count' => $post->likes()->count(),
+                    // 'user_has_liked' => auth()->check() && $post->likes()->where('user_id', auth()->id())->exists(),
+                    'user_has_liked' => $post->likes()->where('user_id', User::first()->id)->exists(),
+                ]
             )
         ]);
     }

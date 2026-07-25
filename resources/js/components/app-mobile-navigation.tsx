@@ -1,8 +1,8 @@
-import { navItem, IsActiveFn } from "@/types";
+import { NavItem, IsActiveFn } from "@/types";
 import { Link } from "@inertiajs/react";
 
 interface AppMobileNavigationProps {
-    navItems: navItem[];
+    navItems: NavItem[];
     isActive: IsActiveFn;
 }
 
@@ -11,10 +11,10 @@ export default function AppMobileNavigation({ navItems, isActive }: AppMobileNav
         <nav className="fixed inset-x-0 bottom-0 z-10 flex justify-around border-t border-border bg-background/90 py-2 backdrop-blur-md lg:hidden">
             {navItems.map((item) => (
                 <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
                     className={`rounded-full px-4 py-2 text-sm transition-colors hover:bg-accent ${
-                        isActive(item.href) ? "font-bold" : "font-normal text-muted-foreground"
+                        isActive(item.href.url) ? "font-bold" : "font-normal text-muted-foreground"
                     }`}
                 >
                     {item.label}

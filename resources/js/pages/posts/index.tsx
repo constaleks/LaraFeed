@@ -2,6 +2,7 @@ import { Post } from '@/types';
 import AppLayout from '@/layouts/app-layout';
 import { Link } from "@inertiajs/react";
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Heart } from 'lucide-react';
 
 interface PostsIndexProps {
     posts: Post[];
@@ -33,9 +34,15 @@ export default function PostsIndex({posts}: PostsIndexProps) {
                                     </div>
                                     <h4 className="text-lg font-bold">{post.title}</h4>
                                 </CardHeader>
-                                <CardContent className="text-sm text-muted-foreground">
-                                    {post.body.substring(0, 160)}
-                                    {post.body.length > 160 && "..."}
+                                <CardContent className="space-y-4">
+                                    <p className="text-sm text-muted-foreground">
+                                        {post.body.substring(0, 160)}
+                                        {post.body.length > 160 && "..."}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-gray-500 text-sm">
+                                        <Heart size={16} className="text-gray-400" />
+                                        <span>{post.likes_count ?? 0}</span>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </Link>

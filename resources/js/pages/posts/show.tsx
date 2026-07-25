@@ -1,4 +1,4 @@
-import { Post, Comment } from '@/types';
+import { Post, Comment, PostLikesData } from '@/types';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -8,24 +8,25 @@ import CommentList from '@/components/comments/comment-list';
 import { Deferred, usePoll } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import LikeButton from '@/components/like-button';
 
 interface PostsShowProps {
     post: Post;
     comments?: Comment[];
+    likes?: PostLikesData;
 }
 
-export default function PostsShow({post, comments}: PostsShowProps) {
+export default function PostsShow({ post, comments, likes }: PostsShowProps) {
     const commentsSectionRef = useRef<HTMLDivElement>(null);
     const commentsCountRef = useRef(comments?.length ?? 0);
     const isUserCommentAuthor = useRef(false);
 
     usePoll(5000, {
-        only: ["comments"],
+        only: ["comments", "likes"],
     });
 
     useEffect(() => {
         const newCommentsCount = comments?.length ?? 0;
-        console.log(isUserCommentAuthor.current);
         if (newCommentsCount > commentsCountRef.current && commentsCountRef.current > 0 && !isUserCommentAuthor.current) {
             toast("New comments available", {
                 duration: 6000,
@@ -75,8 +76,11 @@ export default function PostsShow({post, comments}: PostsShowProps) {
                         })}
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {post.body}
+                <CardContent className="space-y-4">
+                    <p>{post.body}</p>
+                    <Deferred data="likes" fallback={<LikeButton postId={post.id} count={likes?.count ?? 0} liked={likes?.user_has_liked} isLoading={!likes} />}>
+                        <LikeButton postId={post.id} count={likes?.count} liked={likes?.user_has_liked} />
+                    </Deferred>
                 </CardContent>
             </Card>
 

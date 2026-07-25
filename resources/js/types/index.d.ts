@@ -7,10 +7,15 @@ export interface Post {
     user_id: number;
     user?: User;
     comments?: Comment[];
+    likes?: Like[];
+    likes_count?: number;
 }
 
-export interface navItem {
-    href: string;
+export interface NavItem {
+    href: {
+        url: string;
+        method: Method;
+    };
     label: string;
 }
 
@@ -35,4 +40,16 @@ export interface Comment {
     user_id: number;
     post?: Post;
     user?: User;
+}
+
+export interface Like {
+    id: number;
+    post_id: number;
+    user_id: number;
+    created_at: string;
+}
+
+export interface PostLikesData {
+    count: number;
+    user_has_liked: boolean;
 }

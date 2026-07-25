@@ -90,7 +90,12 @@ The app runs across four containers plus a host-based frontend toolchain:
    docker exec -it larafeed_app artisan migrate --seed
    ```
 
-8. **Install frontend dependencies and start Vite** (run locally, not in Docker)
+8. **Generate Wayfinder route/controller TypeScript files**
+   ```bash
+   docker exec -it larafeed_app php artisan wayfinder:generate
+   ```
+
+9. **Install frontend dependencies and start Vite** (run locally, not in Docker)
    ```bash
    npm install
    npm run dev
