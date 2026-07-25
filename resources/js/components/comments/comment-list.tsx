@@ -1,0 +1,29 @@
+import { Comment } from "@/types";
+import CommentCard from "./comment-card";
+import LoadingCard from "../loading-card";
+
+interface CommentListProps {
+    comments?: Comment[];
+}
+
+export default function CommentList({ comments }: CommentListProps) {
+    if (comments === undefined) {
+        return <LoadingCard message="Loading comments..." />
+    };
+
+    if (comments.length === 0) {
+        return (
+            <div className="text-center mt-8">
+                <p>No comments yet.</p>
+            </div>
+        );
+    };
+
+    return (
+        <div className="space-y-4">
+            {comments.map((comment) => (
+                <CommentCard key={comment.id} comment={comment} />
+            ))}
+        </div>
+    );
+};

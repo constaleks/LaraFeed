@@ -6,10 +6,11 @@ import InputError from '@/components/input-error';
 
 interface CommentFormProps {
     postId: number;
+    onCommentSubmitting?: () => void;
     onCommentAdded?: () => void;
 }
 
-function CommentForm({postId, onCommentAdded}: CommentFormProps) {
+function CommentForm({postId, onCommentSubmitting, onCommentAdded}: CommentFormProps) {
     return (
         <Card className="mt-4">
             <CardHeader>
@@ -17,8 +18,9 @@ function CommentForm({postId, onCommentAdded}: CommentFormProps) {
                 <CardDescription>Share your thoughts about this post</CardDescription>
             </CardHeader>
             <CardContent>
-                <Form action="/comments" method="post" 
-                    resetOnSuccess 
+                <Form action="/comments" method="post"
+                    resetOnSuccess
+                    onStart={() => onCommentSubmitting?.()}
                     onSuccess={() => onCommentAdded?.()}
                     options={{only: ["comments"]}}
                 >

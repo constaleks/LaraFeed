@@ -3,31 +3,59 @@ import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import CommentForm from '@/components/comments/comment-form';
-import CommentCard from '@/components/comments/comment-card';
+import CommentList from '@/components/comments/comment-list';
 
-import { Deferred } from '@inertiajs/react';
-import { useRef } from 'react';
+import { Deferred, usePoll } from '@inertiajs/react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 interface PostsShowProps {
     post: Post;
-    comments: Comment[];
+    comments?: Comment[];
 }
 
 export default function PostsShow({post, comments}: PostsShowProps) {
     const commentsSectionRef = useRef<HTMLDivElement>(null);
+    const commentsCountRef = useRef(comments?.length ?? 0);
+    const isUserCommentAuthor = useRef(false);
+
+    usePoll(5000, {
+        only: ["comments"],
+    });
+
+    useEffect(() => {
+        const newCommentsCount = comments?.length ?? 0;
+        console.log(isUserCommentAuthor.current);
+        if (newCommentsCount > commentsCountRef.current && commentsCountRef.current > 0 && !isUserCommentAuthor.current) {
+            toast("New comments available", {
+                duration: 6000,
+                action: {
+                    label: "View comments",
+                    onClick: scrollToCommentsSection
+                }
+            })
+        } 
+        commentsCountRef.current = newCommentsCount;
+        isUserCommentAuthor.current = false;
+    }, [comments]);
+
+    const scrollToCommentsSection = () => {
+        commentsSectionRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+    };
+
+    const handleCommentSubmitting = () => {
+        isUserCommentAuthor.current = true;
+    };
 
     const handleCommentAdded = () => {
         toast("Comment has been added", {
             description: "Thank You for sharing Your thoughts about this post!"
         });
 
-        setTimeout(() => {
-            commentsSectionRef.current?.scrollIntoView({
-                behavior: "smooth",
-                block: "nearest"
-            })
-        }, 100);
+        setTimeout(scrollToCommentsSection, 100);
     };
 
     return (
@@ -52,25 +80,11 @@ export default function PostsShow({post, comments}: PostsShowProps) {
                 </CardContent>
             </Card>
 
-            <CommentForm postId={post.id} onCommentAdded={handleCommentAdded} />
+            <CommentForm postId={post.id} onCommentSubmitting={handleCommentSubmitting} onCommentAdded={handleCommentAdded} />
 
             <div ref={commentsSectionRef}>
-                <Deferred data="comments" fallback={
-                    <div className="text-center mt-8">
-                        <p>Loading comments...</p>
-                    </div>
-                }>
-                    {comments && comments.length > 0 ? (
-                        <div className="space-y-4">
-                            {comments.map((comment) => (
-                                <CommentCard key={comment.id} comment={comment} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center mt-8">
-                            <p>No comments yet.</p>
-                        </div>
-                    )}
+                <Deferred data="comments" fallback={<CommentList />}>
+                    <CommentList comments={comments} />
                 </Deferred>
             </div>
         </AppLayout>
