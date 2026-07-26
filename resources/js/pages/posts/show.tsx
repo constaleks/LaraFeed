@@ -1,11 +1,11 @@
-import { Post, Comment, PostLikesData } from '@/types';
+import { Post, Comment, PostLikesData, PageProps } from '@/types';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import CommentForm from '@/components/comments/comment-form';
 import CommentList from '@/components/comments/comment-list';
 
-import { Deferred, usePoll } from '@inertiajs/react';
+import { Deferred, usePage, usePoll } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import LikeButton from '@/components/like-button';
@@ -17,6 +17,8 @@ interface PostsShowProps {
 }
 
 export default function PostsShow({ post, comments, likes }: PostsShowProps) {
+    const { user } = usePage<PageProps>().props;
+
     const commentsSectionRef = useRef<HTMLDivElement>(null);
     const commentsCountRef = useRef(comments?.length ?? 0);
     const isUserCommentAuthor = useRef(false);
@@ -79,12 +81,14 @@ export default function PostsShow({ post, comments, likes }: PostsShowProps) {
                 <CardContent className="space-y-4">
                     <p>{post.body}</p>
                     <Deferred data="likes" fallback={<LikeButton postId={post.id} count={likes?.count ?? 0} liked={likes?.user_has_liked} isLoading={!likes} />}>
-                        <LikeButton postId={post.id} count={likes?.count} liked={likes?.user_has_liked} />
+                        <LikeButton postId={post.id} count={likes?.count} liked={likes?.user_has_liked} isLoading={!user} />
                     </Deferred>
                 </CardContent>
             </Card>
 
-            <CommentForm postId={post.id} onCommentSubmitting={handleCommentSubmitting} onCommentAdded={handleCommentAdded} />
+            { user ? (
+                <CommentForm postId={post.id} onCommentSubmitting={handleCommentSubmitting} onCommentAdded={handleCommentAdded} />
+            ) : ""}
 
             <div ref={commentsSectionRef}>
                 <Deferred data="comments" fallback={<CommentList />}>

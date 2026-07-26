@@ -14,8 +14,7 @@ class PostToggleLike extends Controller
      */
     public function __invoke(Request $request, Post $post): RedirectResponse
     {
-        // $userId = User::inRandomOrder()->first()->id;
-        $userId = User::first()->id;
+        $userId = auth()->id();
 
         $like = $post->likes()->where('user_id', $userId)->first();
 

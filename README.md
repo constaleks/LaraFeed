@@ -103,7 +103,7 @@ The app runs across four containers plus a host-based frontend toolchain:
 
 ## Roadmap & Ideas for Further Improvement
 
-- [ ] Create posts, comments and likes
+- [x] Create posts, comments and likes
 - [ ] Infinite scroll pagination with cursor-based pagination
 - [ ] Real-time polling for new content updates
 - [ ] Search functionality

@@ -9,13 +9,15 @@ use App\Models\Post;
 use Illuminate\Http\RedirectResponse; 
 use App\Models\User;
 use App\Http\Requests\Post\StoreRequest;
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
     public function index(): Response 
     {
         return Inertia::render('posts/index', [
-            'posts' => Post::with('user')->withCount('likes')->latest()->get(),
+            'posts' => PostResource::collection(Post::with('user')->withCount('likes')->latest()->get()),
         ]);
     }
 
@@ -24,15 +26,14 @@ class PostController extends Controller
         $post = Post::with('user')->findOrFail($id);
 
         return Inertia::render('posts/show', [
-            'post' => $post,
+            'post' => new PostResource($post),
             'comments' => Inertia::defer(
-                fn() => $post->comments()->with('user')->latest()->get()
+                fn() => CommentResource::collection($post->comments()->with('user')->latest()->get())
             ),
             'likes' => Inertia::defer(
                 fn() => [
                     'count' => $post->likes()->count(),
-                    // 'user_has_liked' => auth()->check() && $post->likes()->where('user_id', auth()->id())->exists(),
-                    'user_has_liked' => $post->likes()->where('user_id', User::first()->id)->exists(),
+                    'user_has_liked' => auth()->check() && $post->likes()->where('user_id', auth()->id())->exists(),
                 ]
             )
         ]);
@@ -49,7 +50,7 @@ class PostController extends Controller
 
         Post::create([
             ...$validated,
-            'user_id' => User::inRandomOrder()->first()->id
+            'user_id' => auth()->id(),
         ]);
 
         return redirect('/posts');

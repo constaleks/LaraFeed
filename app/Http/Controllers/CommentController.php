@@ -16,7 +16,7 @@ class CommentController extends Controller
 
         Comment::create([
             ...$validated,
-            'user_id' => User::inRandomOrder()->first()->id
+            'user_id' => auth()->id(),
         ]);
 
         return redirect()->back();
