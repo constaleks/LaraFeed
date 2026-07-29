@@ -1,23 +1,23 @@
-import { Post } from '@/types';
+import { Post, Paginated } from '@/types';
 import AppLayout from '@/layouts/app-layout';
-import { Link } from "@inertiajs/react";
+import { Link, InfiniteScroll } from "@inertiajs/react";
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Heart } from 'lucide-react';
 
 interface PostsIndexProps {
-    posts: Post[];
+    posts: Paginated<Post>;
 }
 
 export default function PostsIndex({posts}: PostsIndexProps) {
     return (
         <AppLayout title="Posts">
-            {posts.length === 0 ? (
+            {posts.data.length === 0 ? (
                 <div className="px-4 py-8 text-center text-muted-foreground">
                     <p>No posts found</p>
                 </div>
             ) : (
-                <div className="flex flex-col gap-4">
-                    {posts.map(post => (
+                <InfiniteScroll data="posts" className="flex flex-col gap-4">
+                    {posts.data.map(post => (
                         <Link key={post.id} href={`/posts/${post.id}`} className="block">
                             <Card className="transition-colors hover:bg-accent">
                                 <CardHeader>
@@ -47,7 +47,7 @@ export default function PostsIndex({posts}: PostsIndexProps) {
                             </Card>
                         </Link>
                     ))}
-                </div>
+                </InfiniteScroll>
             )}
         </AppLayout>
     )

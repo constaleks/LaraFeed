@@ -58,3 +58,7 @@ export interface PageProps {
     user: User | null;
     [key: string]: any;
 }
+
+export interface Paginated<T> {
+    data: T[];
+}

@@ -29,7 +29,7 @@ Route::prefix('comments')->group(function() {
 });
 
 Route::prefix('auth')->middleware('guest')->group(function() {
-    Route::get('/login', [LoginController::class, 'create']);
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::get('/register', [RegisterController::class, 'create']);
     Route::post('/login', [LoginController::class, 'store']);
     Route::post('/register', [RegisterController::class, 'store']);

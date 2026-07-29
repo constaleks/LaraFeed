@@ -17,7 +17,14 @@ class PostController extends Controller
     public function index(): Response 
     {
         return Inertia::render('posts/index', [
-            'posts' => PostResource::collection(Post::with('user')->withCount('likes')->latest()->get()),
+            'posts' => Inertia::scroll(fn() =>
+                PostResource::collection(
+                    Post::with('user')->withCount('likes')
+                        ->orderBy('created_at', 'desc')
+                        ->orderBy('id', 'desc')
+                        ->cursorPaginate(5)
+                )
+            ),
         ]);
     }
 
@@ -27,9 +34,15 @@ class PostController extends Controller
 
         return Inertia::render('posts/show', [
             'post' => new PostResource($post),
-            'comments' => Inertia::defer(
-                fn() => CommentResource::collection($post->comments()->with('user')->latest()->get())
+            'comments' => Inertia::scroll(fn() => 
+                CommentResource::collection(
+                    $post->comments()->with('user')
+                        ->orderBy('created_at', 'desc')
+                        ->orderBy('id', 'desc')
+                        ->cursorPaginate(5)
+                )
             ),
+            'comments_count' => Inertia::defer(fn() => $post->comments()->count()),
             'likes' => Inertia::defer(
                 fn() => [
                     'count' => $post->likes()->count(),

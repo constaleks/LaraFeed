@@ -24,7 +24,7 @@ function CommentForm({postId, onCommentSubmitting, onCommentAdded}: CommentFormP
                     resetOnSuccess
                     onStart={() => onCommentSubmitting?.()}
                     onSuccess={() => onCommentAdded?.()}
-                    options={{only: ["comments"]}}
+                    options={{only: ["comments", "comments_count"], reset: ["comments"]}}
                 >
                     {({ errors, processing }) => (
                         <>

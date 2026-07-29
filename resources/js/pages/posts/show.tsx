@@ -1,51 +1,60 @@
-import { Post, Comment, PostLikesData, PageProps } from '@/types';
+import { Post, Comment, PostLikesData, PageProps, Paginated } from '@/types';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import CommentForm from '@/components/comments/comment-form';
 import CommentList from '@/components/comments/comment-list';
 
-import { Deferred, usePage, usePoll } from '@inertiajs/react';
+import { Deferred, InfiniteScroll, router, usePage, usePoll } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import LikeButton from '@/components/like-button';
 
 interface PostsShowProps {
     post: Post;
-    comments?: Comment[];
+    comments?: Paginated<Comment>;
+    comments_count?: number;
     likes?: PostLikesData;
 }
 
-export default function PostsShow({ post, comments, likes }: PostsShowProps) {
+export default function PostsShow({ post, comments, comments_count, likes }: PostsShowProps) {
     const { user } = usePage<PageProps>().props;
 
     const commentsSectionRef = useRef<HTMLDivElement>(null);
-    const commentsCountRef = useRef(comments?.length ?? 0);
+    const commentsCountRef = useRef(comments_count ?? 0);
     const isUserCommentAuthor = useRef(false);
 
     usePoll(5000, {
-        only: ["comments", "likes"],
+        only: ["comments_count", "likes"],
     });
 
     useEffect(() => {
-        const newCommentsCount = comments?.length ?? 0;
+        const newCommentsCount = comments_count ?? 0;
         if (newCommentsCount > commentsCountRef.current && commentsCountRef.current > 0 && !isUserCommentAuthor.current) {
             toast("New comments available", {
                 duration: 6000,
                 action: {
                     label: "View comments",
-                    onClick: scrollToCommentsSection
+                    onClick: handleViewNewComments
                 }
             })
-        } 
+        }
         commentsCountRef.current = newCommentsCount;
         isUserCommentAuthor.current = false;
-    }, [comments]);
+    }, [comments_count]);
 
     const scrollToCommentsSection = () => {
         commentsSectionRef.current?.scrollIntoView({
             behavior: "smooth",
             block: "nearest"
+        });
+    };
+
+    const handleViewNewComments = () => {
+        router.reload({
+            only: ["comments", "comments_count"],
+            reset: ["comments"],
+            onSuccess: scrollToCommentsSection,
         });
     };
 
@@ -81,7 +90,7 @@ export default function PostsShow({ post, comments, likes }: PostsShowProps) {
                 <CardContent className="space-y-4">
                     <p>{post.body}</p>
                     <Deferred data="likes" fallback={<LikeButton postId={post.id} count={likes?.count ?? 0} liked={likes?.user_has_liked} isLoading={!likes} />}>
-                        <LikeButton postId={post.id} count={likes?.count} liked={likes?.user_has_liked} isLoading={!user} />
+                        <LikeButton postId={post.id} count={likes?.count} liked={likes?.user_has_liked} />
                     </Deferred>
                 </CardContent>
             </Card>
@@ -91,9 +100,9 @@ export default function PostsShow({ post, comments, likes }: PostsShowProps) {
             ) : ""}
 
             <div ref={commentsSectionRef}>
-                <Deferred data="comments" fallback={<CommentList />}>
-                    <CommentList comments={comments} />
-                </Deferred>
+                <InfiniteScroll data="comments">
+                    <CommentList comments={comments?.data} />
+                </InfiniteScroll>
             </div>
         </AppLayout>
     )
