@@ -1,5 +1,5 @@
 import { usePage } from "@inertiajs/react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import AppNavigation from "@/components/app-navigation";
 import AppMobileNavigation from "@/components/app-mobile-navigation";
@@ -8,6 +8,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { index as homeIndex } from "@/routes/home";
 import { index as aboutIndex } from "@/routes/about";
 import { index as postIndex } from "@/actions/App/Http/Controllers/PostController";
+import { PageProps } from "@/types";
+import { toast } from "sonner";
 
 interface AppLayoutProps {
     title: string;
@@ -24,6 +26,20 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
     const { url } = usePage();
 
     const isActive = (href: string) => (href === "/" ? url === "/" : url.startsWith(href));
+
+    const { flash } = usePage<PageProps>().props;
+    const shownFlashRef = useRef<{ success?: string; error?: string }>({});
+    useEffect(() => {
+        if (flash.success && shownFlashRef.current.success !== flash.success) {
+            toast(flash.success);
+            shownFlashRef.current.success = flash.success;
+        }
+
+        if (flash.error && shownFlashRef.current.error !== flash.error) {
+            toast(flash.error);
+            shownFlashRef.current.error = flash.error;
+        }
+    }, [flash]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-muted/60 via-background to-background text-foreground flex justify-center">

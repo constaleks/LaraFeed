@@ -14,7 +14,7 @@ interface AppNavigationProps {
 }
 
 export default function AppNavigation({ navItems, isActive }: AppNavigationProps) {
-    const { user } = usePage<PageProps>().props;
+    const { auth } = usePage<PageProps>().props;
 
     const handleLogout = () => {
         router.delete(destroy());
@@ -42,10 +42,12 @@ export default function AppNavigation({ navItems, isActive }: AppNavigationProps
                     </Link>
                 ))}
 
-                { user ? (
-                    <Button render={<Link href={create()} />} nativeButton={false} size="lg" className="mx-2 text-lg">
-                        Write a post
-                    </Button>
+                { auth.user ? (
+                    auth.can.post.create ?
+                        <Button render={<Link href={create()} />} nativeButton={false} size="lg" className="mx-2 text-lg">
+                            Write a post
+                        </Button>
+                        : ""
                 ) : (
                     <div className="mx-2 mt-3 flex flex-col gap-2">
                         <Button render={<Link href={registerCreate()} />} nativeButton={false} size="lg" className="text-lg">
@@ -61,12 +63,12 @@ export default function AppNavigation({ navItems, isActive }: AppNavigationProps
             <div className="mt-auto flex flex-col gap-1">
                 <ThemeToggle />
 
-                { user ? (
+                { auth.user ? (
                     <>
                         <div className="flex cursor-pointer items-center gap-3 rounded-full p-3 transition-colors hover:bg-accent">
                             <div className="h-10 w-10 rounded-full bg-muted" />
                             <div className="flex flex-col text-sm">
-                                <span className="font-bold">{user.name}</span>
+                                <span className="font-bold">{auth.user.name}</span>
                             </div>
                         </div>
                         <button

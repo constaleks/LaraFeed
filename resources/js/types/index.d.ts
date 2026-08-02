@@ -55,7 +55,18 @@ export interface PostLikesData {
 }
 
 export interface PageProps {
-    user: User | null;
+    auth: {
+        user: User | null;
+        can: {
+            post: {
+                create: boolean;
+            };
+        };
+    };
+    flash: {
+        success?: string;
+        error?: string;
+    };
     [key: string]: any;
 }
 

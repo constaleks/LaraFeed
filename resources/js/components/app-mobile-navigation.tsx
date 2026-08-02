@@ -10,7 +10,7 @@ interface AppMobileNavigationProps {
 }
 
 export default function AppMobileNavigation({ navItems, isActive }: AppMobileNavigationProps) {
-    const { user } = usePage<PageProps>().props;
+    const { auth } = usePage<PageProps>().props;
 
     const handleLogout = () => {
         router.delete(destroy());
@@ -30,7 +30,7 @@ export default function AppMobileNavigation({ navItems, isActive }: AppMobileNav
                 </Link>
             ))}
 
-            { user ? (
+            { auth.user ? (
                 <button
                     type="button"
                     onClick={handleLogout}

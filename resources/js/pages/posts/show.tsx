@@ -9,16 +9,21 @@ import { Deferred, InfiniteScroll, router, usePage, usePoll } from '@inertiajs/r
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import LikeButton from '@/components/like-button';
+import PostActionsDropdown from '@/components/post-actions-dropdown';
 
 interface PostsShowProps {
     post: Post;
     comments?: Paginated<Comment>;
     comments_count?: number;
     likes?: PostLikesData;
+    can: {
+        update: boolean;
+        delete: boolean;
+    }
 }
 
-export default function PostsShow({ post, comments, comments_count, likes }: PostsShowProps) {
-    const { user } = usePage<PageProps>().props;
+export default function PostsShow({ post, comments, comments_count, likes, can }: PostsShowProps) {
+    const { auth } = usePage<PageProps>().props;
 
     const commentsSectionRef = useRef<HTMLDivElement>(null);
     const commentsCountRef = useRef(comments_count ?? 0);
@@ -74,11 +79,12 @@ export default function PostsShow({ post, comments, comments_count, likes }: Pos
         <AppLayout title={post.title}>
             <Card>
                 <CardHeader>
-                    <CardTitle>
+                    <CardTitle className="flex justify-between">
                         <div className="flex items-center gap-2">
                             <div className="h-11 w-11 shrink-0 rounded-full bg-muted" />
                             {post.user?.name}
                         </div>
+                        <PostActionsDropdown postId={post.id} canUpdate={can.update} canDelete={can.delete}></PostActionsDropdown>
                     </CardTitle>
                     <CardDescription>
                         {new Date(post.created_at).toLocaleString("en-US", {
@@ -95,7 +101,7 @@ export default function PostsShow({ post, comments, comments_count, likes }: Pos
                 </CardContent>
             </Card>
 
-            { user ? (
+            { auth.user ? (
                 <CommentForm postId={post.id} onCommentSubmitting={handleCommentSubmitting} onCommentAdded={handleCommentAdded} />
             ) : ""}
 

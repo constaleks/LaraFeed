@@ -17,10 +17,14 @@ Route::get('/about', function () {
 })->name('about.index');
 
 Route::prefix('posts')->group(function() {
-    Route::get('/', [PostController::class, 'index']);
-    Route::get('/create', [PostController::class, 'create']);
-    Route::get('/{id}', [PostController::class, 'show']);
+    Route::get('/', [PostController::class, 'index'])->name('posts.index');
+    Route::get('/create', [PostController::class, 'create'])->middleware('auth');
+    Route::get('/{post}', [PostController::class, 'show'])->name('posts.show');
+    Route::get('/{post}/edit', [PostController::class, 'edit'])->middleware('auth')->name('posts.edit');
     Route::post('/', [PostController::class, 'store'])->middleware('auth');
+    Route::put('/{post}', [PostController::class, 'update'])->middleware('auth');
+    Route::delete('/{post}', [PostController::class, 'destroy'])->middleware('auth')->name('posts.destroy');
+
     Route::post('/{post}/toggle/like', PostToggleLike::class)->middleware('auth');
 });
 

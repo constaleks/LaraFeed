@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\Post\UpdateRequest;
 
 class PostController extends Controller
 {
@@ -34,6 +36,10 @@ class PostController extends Controller
 
         return Inertia::render('posts/show', [
             'post' => new PostResource($post),
+            'can' => [
+                'update' => auth()->check() && auth()->user()->can('update', $post),
+                'delete' => auth()->check() && auth()->user()->can('destroy', $post),
+            ],
             'comments' => Inertia::scroll(fn() => 
                 CommentResource::collection(
                     $post->comments()->with('user')
@@ -54,11 +60,22 @@ class PostController extends Controller
 
     public function create(): Response
     {
+        Gate::authorize('create', Post::class);
+
         return Inertia::render('posts/create');
+    }
+
+    public function edit(Post $post): Response
+    {
+        Gate::authorize('update', $post);
+
+        return Inertia::render('posts/edit', ['post' => $post]);
     }
 
     public function store(StoreRequest $request): RedirectResponse
     {
+        Gate::authorize('create', Post::class);
+
         $validated = $request->validated();
 
         Post::create([
@@ -66,6 +83,26 @@ class PostController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return redirect('/posts');
+        return redirect()->route('posts.index')->with('success', 'Post created successfully!');
+    }
+
+    public function update(UpdateRequest $request, Post $post): RedirectResponse
+    {
+        Gate::authorize('update', $post);
+
+        $validated = $request->validated();
+
+        $post->update($validated);
+
+        return redirect()->route('posts.show', $post)->with('success', 'Post edited successfully!');
+    }
+
+    public function destroy(Post $post): RedirectResponse
+    {
+        Gate::authorize('destroy', $post);
+
+        $post->delete();
+
+        return redirect()->route('posts.index');
     }
 }
